@@ -29,9 +29,33 @@ def compare_moving_averages(rows, coin, short_period=5, long_period=10):
     }
 
 def relative_strength_index(rows, coin, period=14):
-    """
-    Placeholder RSI.
-    Returns 50 until real implementation.
-    """
+    if len(rows) < 2:
+        return 50.0
 
-    return 50.0
+    gains = []
+    losses = []
+
+    recent = rows[-(period + 1):]
+
+    for i in range(1, len(recent)):
+        change = recent[i][coin] - recent[i - 1][coin]
+
+        if change > 0:
+            gains.append(change)
+            losses.append(0)
+        else:
+            gains.append(0)
+            losses.append(abs(change))
+
+    average_gain = sum(gains) / len(gains)
+    average_loss = sum(losses) / len(losses)
+
+    if average_loss == 0:
+        return 100.0
+
+    rs = average_gain / average_loss
+
+    rsi = 100 - (100 / (1 + rs))
+
+    return round(rsi, 2)
+
