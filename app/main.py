@@ -1,26 +1,26 @@
-from datetime import datetime
+from analyze_prices import analyze, load_prices
+from save_prices import save_prices
 
 
-class RocketHedge:
-    VERSION = "0.1.0"
+def main():
+    print("=" * 44)
+    print(" PROJECT ROCKET HEDGE")
+    print("=" * 44)
+    print()
 
-    def startup(self):
-        print("=" * 50)
-        print("🚀 PROJECT ROCKET HEDGE")
-        print(f"Version {self.VERSION}")
-        print("=" * 50)
-        print()
-        print("Mission Status : ONLINE")
-        print(f"Startup Time : {datetime.now():%Y-%m-%d %H:%M:%S}")
-        print()
-        print("Market Scanner : OFFLINE")
-        print("AI Analyst : OFFLINE")
-        print("Risk Engine : OFFLINE")
-        print("Portfolio : OFFLINE")
-        print("Coinbase : NOT CONNECTED")
-        print()
-        print("Ready to begin development.")
+    print("Collecting latest prices...")
+    save_prices()
+    print()
+
+    rows = load_prices()
+
+    if not rows:
+        print("No price history available.")
+        return
+
+    analyze(rows)
 
 
 if __name__ == "__main__":
-    RocketHedge().startup()
+    main()
+
