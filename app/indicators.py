@@ -75,13 +75,36 @@ def exponential_moving_average(rows, coin, period):
     return round(ema, 2)
 
 def macd(rows, coin):
-    ema12 = exponential_moving_average(rows, coin, 12)
-    ema26 = exponential_moving_average(rows, coin, 26)
+    """
+    Moving Average Convergence Divergence
+    """
 
-    macd_line = ema12 - ema26
+    if len(rows) < 35:
+        raise ValueError("Not enough price history")
+
+    prices = [row[coin] for row in rows]
+
+    macd_values = []
+
+    for i in range(26, len(prices)):
+        subset = [{"price": p} for p in prices[:i + 1]]
+
+        ema12 = exponential_moving_average(subset, "price", 12)
+        ema26 = exponential_moving_average(subset, "price", 26)
+
+        macd_values.append(ema12 - ema26)
+
+    signal = sum(macd_values[-9:]) / 9
+
+    current_macd = macd_values[-1]
+
+    histogram = current_macd - signal
 
     return {
         "ema12": round(ema12, 2),
         "ema26": round(ema26, 2),
-        "macd": round(macd_line, 2),
+        "macd": round(current_macd, 2),
+        "signal": round(signal, 2),
+        "histogram": round(histogram, 2),
     }
+
