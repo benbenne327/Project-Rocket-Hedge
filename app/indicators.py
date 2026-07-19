@@ -27,3 +27,11 @@ def compare_moving_averages(rows, coin, short_period=5, long_period=10):
         "trend": trend,
         "signal": signal,
     }
+
+def relative_strength_index(rows, coin, period=14):
+    """
+    Placeholder RSI.
+    Returns 50 until real implementation.
+    """
+
+    return 50.0

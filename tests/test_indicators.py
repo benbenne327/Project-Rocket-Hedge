@@ -84,3 +84,12 @@ def test_compare_moving_averages_rejects_empty_history():
     else:
         raise AssertionError("Expected ValueError for empty price history")
 
+from app.indicators import relative_strength_index
+
+def test_placeholder_rsi():
+    rows = [{"bitcoin": 100}]
+
+    rsi = relative_strength_index(rows, "bitcoin")
+
+    assert rsi == 50.0
+
