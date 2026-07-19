@@ -36,4 +36,51 @@ def test_buy_signal():
 
     assert result["signal"] == "BUY"
 
+def test_sell_signal():
+    sell_rows = [
+        {"bitcoin": 100},
+        {"bitcoin": 90},
+        {"bitcoin": 80},
+        {"bitcoin": 70},
+        {"bitcoin": 60},
+        {"bitcoin": 50},
+        {"bitcoin": 40},
+        {"bitcoin": 30},
+        {"bitcoin": 20},
+        {"bitcoin": 10},
+    ]
+
+    result = compare_moving_averages(sell_rows, "bitcoin")
+
+    assert result["signal"] == "SELL"
+    assert result["trend"] == "DOWN"
+
+
+def test_hold_signal():
+    hold_rows = [
+        {"bitcoin": 100},
+        {"bitcoin": 100},
+        {"bitcoin": 100},
+        {"bitcoin": 100},
+        {"bitcoin": 100},
+        {"bitcoin": 100},
+        {"bitcoin": 100},
+        {"bitcoin": 100},
+        {"bitcoin": 100},
+        {"bitcoin": 100},
+    ]
+
+    result = compare_moving_averages(hold_rows, "bitcoin")
+
+    assert result["signal"] == "HOLD"
+    assert result["trend"] == "SIDEWAYS"
+
+
+def test_compare_moving_averages_rejects_empty_history():
+    try:
+        compare_moving_averages([], "bitcoin")
+    except ValueError as error:
+        assert str(error) == "Price history cannot be empty"
+    else:
+        raise AssertionError("Expected ValueError for empty price history")
 
