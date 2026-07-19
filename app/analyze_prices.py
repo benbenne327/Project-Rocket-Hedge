@@ -1,5 +1,5 @@
 import csv
-
+from indicators import moving_average
 
 def load_prices():
     prices = []
@@ -26,7 +26,7 @@ def analyze(rows):
 
     for coin in ["bitcoin", "ethereum", "solana"]:
         latest = rows[-1][coin]
-        average = sum(row[coin] for row in rows) / len(rows)
+        average = moving_average(rows, coin)
         difference_percent = (latest - average) / average * 100
 
         if difference_percent >= 0.10:
