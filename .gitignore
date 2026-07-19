@@ -13,3 +13,4 @@ data/*.csv
 
 # Logs
 logs/*.log
+data/*.csv.*
