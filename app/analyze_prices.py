@@ -1,5 +1,7 @@
 import csv
-from indicators import moving_average
+
+from indicators import compare_moving_averages, relative_strength_index
+
 
 def load_prices():
     prices = []
@@ -9,11 +11,13 @@ def load_prices():
             reader = csv.DictReader(file)
 
             for row in reader:
-                prices.append({
-                    "bitcoin": float(row["bitcoin"]),
-                    "ethereum": float(row["ethereum"]),
-                    "solana": float(row["solana"]),
-                })
+                prices.append(
+                    {
+                        "bitcoin": float(row["bitcoin"]),
+                        "ethereum": float(row["ethereum"]),
+                        "solana": float(row["solana"]),
+                    }
+                )
 
     except FileNotFoundError:
         print("No price history found.")
@@ -25,26 +29,16 @@ def analyze(rows):
     print("\n===== ROCKET HEDGE ANALYZER =====\n")
 
     for coin in ["bitcoin", "ethereum", "solana"]:
-        latest = rows[-1][coin]
-        average = moving_average(rows, coin)
-        difference_percent = (latest - average) / average * 100
-
-        if difference_percent >= 0.10:
-            trend = "UP"
-            signal = "BUY"
-        elif difference_percent <= -0.10:
-            trend = "DOWN"
-            signal = "SELL"
-        else:
-            trend = "SIDEWAYS"
-            signal = "HOLD"
+        analysis = compare_moving_averages(rows, coin)
+        rsi = relative_strength_index(rows, coin)
 
         print(coin.upper())
-        print(f"Current    : ${latest:,.2f}")
-        print(f"Average    : ${average:,.2f}")
-        print(f"Difference : {difference_percent:+.4f}%")
-        print(f"Trend      : {trend}")
-        print(f"Signal     : {signal}")
+        print(f"5 MA       : ${analysis['short_average']:,.2f}")
+        print(f"10 MA      : ${analysis['long_average']:,.2f}")
+        print(f"Difference : {analysis['difference_percent']:+.2f}%")
+        print(f"RSI        : {rsi:.2f}")
+        print(f"Trend      : {analysis['trend']}")
+        print(f"Signal     : {analysis['signal']}")
         print()
 
 
