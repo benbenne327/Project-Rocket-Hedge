@@ -59,3 +59,29 @@ def relative_strength_index(rows, coin, period=14):
 
     return round(rsi, 2)
 
+def exponential_moving_average(rows, coin, period):
+    if len(rows) < period:
+        raise ValueError("Not enough price history")
+
+    prices = [row[coin] for row in rows]
+
+    multiplier = 2 / (period + 1)
+
+    ema = sum(prices[:period]) / period
+
+    for price in prices[period:]:
+        ema = (price - ema) * multiplier + ema
+
+    return round(ema, 2)
+
+def macd(rows, coin):
+    ema12 = exponential_moving_average(rows, coin, 12)
+    ema26 = exponential_moving_average(rows, coin, 26)
+
+    macd_line = ema12 - ema26
+
+    return {
+        "ema12": round(ema12, 2),
+        "ema26": round(ema26, 2),
+        "macd": round(macd_line, 2),
+    }
