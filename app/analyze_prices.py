@@ -4,6 +4,7 @@ from indicators import (
     compare_moving_averages,
     relative_strength_index,
     macd,
+    bollinger_bands,
 )
 
 
@@ -36,6 +37,7 @@ def analyze(rows):
         analysis = compare_moving_averages(rows, coin)
         rsi = relative_strength_index(rows, coin)
         macd_data = macd(rows, coin) if len(rows) >= 35 else None
+        bb = bollinger_bands(rows, coin)
 
         print(coin.upper())
         print(f"5 MA       : ${analysis['short_average']:,.2f}")
@@ -52,6 +54,14 @@ def analyze(rows):
         else:
             remaining = 35 - len(rows)
             print(f"MACD       : Collecting data ({remaining} more rows needed)")
+
+        print()
+        print("BOLLINGER BANDS")
+        print(f"Middle    : {bb['middle']:.2f}")
+        print(f"Upper     : {bb['upper']:.2f}")
+        print(f"Lower     : {bb['lower']:.2f}")
+        print(f"Bandwidth : {bb['bandwidth']:.2f}%")
+        print(f"%B        : {bb['percent_b']:.2f}")
 
         print(f"Trend      : {analysis['trend']}")
         print(f"Signal     : {analysis['signal']}")

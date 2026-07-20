@@ -1,3 +1,5 @@
+import math
+
 def moving_average(rows, coin, period=10):
  recent = rows[-min(period, len(rows)):]
  return sum(r[coin] for r in recent) / len(recent)
@@ -106,5 +108,48 @@ def macd(rows, coin):
         "macd": round(current_macd, 2),
         "signal": round(signal, 2),
         "histogram": round(histogram, 2),
+    }
+
+
+def bollinger_bands(rows, coin, period=20, std_dev=2):
+    """
+    Calculates Bollinger Bands.
+
+    Returns:
+        middle
+        upper
+        lower
+        bandwidth
+        percent_b
+    """
+
+    if len(rows) < period:
+        raise ValueError("Not enough price history")
+
+    prices = [row[coin] for row in rows[-period:]]
+
+    middle = sum(prices) / period
+
+    variance = sum((price - middle) ** 2 for price in prices) / period
+    standard_deviation = math.sqrt(variance)
+
+    upper = middle + std_dev * standard_deviation
+    lower = middle - std_dev * standard_deviation
+
+    bandwidth = ((upper - lower) / middle) * 100 if middle else 0
+
+    current_price = prices[-1]
+
+    if upper == lower:
+        percent_b = 0.5
+    else:
+        percent_b = (current_price - lower) / (upper - lower)
+
+    return {
+        "middle": round(middle, 2),
+        "upper": round(upper, 2),
+        "lower": round(lower, 2),
+        "bandwidth": round(bandwidth, 2),
+        "percent_b": round(percent_b, 2),
     }
 
