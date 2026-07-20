@@ -1,4 +1,10 @@
-from app.indicators import moving_average
+from app.indicators import (
+    moving_average,
+    compare_moving_averages,
+    relative_strength_index,
+    exponential_moving_average,
+    macd,
+)
 
 
 def test_moving_average_uses_recent_rows():
@@ -14,7 +20,6 @@ def test_moving_average_uses_recent_rows():
 
     assert result == 40.0
 
-from app.indicators import compare_moving_averages
 
 
 def test_buy_signal():
@@ -84,7 +89,6 @@ def test_compare_moving_averages_rejects_empty_history():
     else:
         raise AssertionError("Expected ValueError for empty price history")
 
-from app.indicators import relative_strength_index
 
 def test_rsi_flat_market():
     rows = []
@@ -96,3 +100,20 @@ def test_rsi_flat_market():
 
     assert rsi == 100.0
 
+def test_exponential_moving_average_constant_prices():
+    rows = [{"bitcoin": 100.0} for _ in range(30)]
+
+    result = exponential_moving_average(rows, "bitcoin", 12)
+
+    assert result == 100.0
+
+def test_macd_constant_prices():
+    rows = [{"bitcoin": 100.0} for _ in range(40)]
+
+    result = macd(rows, "bitcoin")
+
+    assert result["ema12"] == 100.0
+    assert result["ema26"] == 100.0
+    assert result["macd"] == 0.0
+    assert result["signal"] == 0.0
+    assert result["histogram"] == 0.0
