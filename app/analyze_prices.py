@@ -7,6 +7,7 @@ from indicators import (
     bollinger_bands,
 )
 
+from signals import build_signal
 
 def load_prices():
     prices = []
@@ -39,6 +40,13 @@ def analyze(rows):
         macd_data = macd(rows, coin) if len(rows) >= 35 else None
         bb = bollinger_bands(rows, coin)
 
+        signal = build_signal(
+            analysis,
+            rsi,
+            macd_data,
+            bb,
+    )
+
         print(coin.upper())
         print(f"5 MA       : ${analysis['short_average']:,.2f}")
         print(f"10 MA      : ${analysis['long_average']:,.2f}")
@@ -63,8 +71,15 @@ def analyze(rows):
         print(f"Bandwidth : {bb['bandwidth']:.2f}%")
         print(f"%B        : {bb['percent_b']:.2f}")
 
-        print(f"Trend      : {analysis['trend']}")
-        print(f"Signal     : {analysis['signal']}")
+        print(f"Trend          : {analysis['trend']}")
+        print(f"Recommendation : {signal['recommendation']}")
+        print(f"Confidence     : {signal['confidence']}")
+        print(f"Score          : {signal['score']}")
+        print("Reasons:")
+
+        for reason in signal["reasons"]:
+            print(f" - {reason}")
+
         print()
 
 
